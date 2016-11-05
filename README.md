@@ -16,6 +16,20 @@ Cheap NFCReader with Arduino Uno CH340
 5. You can access your Arduino on /dev/tty.anu
 
 ## Requirement
-1. Arduino AVR Boards version 1.6.11
+1. [Arduino RFID Library for MFRC522]
+2. Arduino AVR Boards version 1.6.11
  * Open up Arduino Apps, select menu tools> Board: "Arduino/Genuino Uno"> Boards Manager
  * Select Version and Install it
+
+## Sceme
+MFRC55 - Arduino
+3.3V - 3.3V
+RST - D9
+GND - GND
+MISO - D12
+MOSI - D11
+SCK - D13
+SDA - D10
+
+
+[Arduino RFID Library for MFRC522]: <https://github.com/miguelbalboa/rfid>

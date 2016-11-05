@@ -15,3 +15,7 @@ Cheap NFCReader with Arduino Uno CH340
   ```
 5. You can access your Arduino on /dev/tty.anu
 
+## Requirement
+1. Arduino AVR Boards version 1.6.11
+ * Open up Arduino Apps, select menu tools> Board: "Arduino/Genuino Uno"> Boards Manager
+ * Select Version and Install it

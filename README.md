@@ -10,8 +10,8 @@ Cheap NFCReader with Arduino Uno CH340
 3. restart MAC, after rebooting login to your MAC and open terminal
 4. Lookat your serial folder and match it to create softlink to it by run this command
   ```sh
-  $ ls /dev/tty.wch*
-  $ sudo ln -s /dev/tty.wch\ ch341\ USB\=\>RS232\ 3d10 /dev/tty.anu
+  $ ls /dev/cu.wch*
+  $ sudo ln -s /dev/cu.wch\ ch341\ USB\=\>RS232\ 1d10 /dev/cu.wch
   ```
 5. You can access your Arduino on /dev/tty.anu
 

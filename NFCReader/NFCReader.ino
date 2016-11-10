@@ -1,47 +1,100 @@
-#include "SPI.h"
-#include "MFRC522.h"
+/**************************************************************************/
+/*! 
+    @file     iso14443a_uid.pde
+    @author   Adafruit Industries
+    @license  BSD (see license.txt)
 
-#define SS_PIN 10
-#define RST_PIN 9
-#define SP_PIN 8
+    This example will attempt to connect to an ISO14443A
+    card or tag and retrieve some basic information about it
+    that can be used to determine what type of card it is.   
+   
+    Note that you need the baud rate to be 115200 because we need to print
+    out the data and read from the card at the same time!
 
-MFRC522 rfid(SS_PIN, RST_PIN);
+    This is an example sketch for the Adafruit PN532 NFC/RFID breakout boards
+    This library works with the Adafruit NFC breakout 
+    ----> https://www.adafruit.com/products/364
+ 
+    Check out the links above for our tutorials and wiring diagrams 
+    These chips use I2C to communicate, 4 pins required to interface:
+    SDA (I2C Data) and SCL (I2C Clock), IRQ and RESET (any digital line)
 
-MFRC522::MIFARE_Key key;
+    Adafruit invests time and resources providing this open source code, 
+    please support Adafruit and open-source hardware by purchasing 
+    products from Adafruit!
+*/
+/**************************************************************************/
+#include <Wire.h>
+#include <Adafruit_NFCShield_I2C.h>
 
-void setup() {
-  Serial.begin(9600);
-  SPI.begin();
-  rfid.PCD_Init();
+#define IRQ   (2)
+#define RESET (3)  // Not connected by default on the NFC Shield
+
+Adafruit_NFCShield_I2C nfc(IRQ, RESET);
+
+void setup(void) {
+  Serial.begin(115200);
+  Serial.println(">http://www.github.com/awangga/NFCReader");
+
+  nfc.begin();
+
+  uint32_t versiondata = nfc.getFirmwareVersion();
+  if (! versiondata) {
+    Serial.print(">Didn't find PN53x board, please close and open serial monitor. If problem still exist please check your wiring");
+    while (1); // halt
+  }
+  
+  // Got ok data, print it out!
+  Serial.print(">Found chip PN5"); Serial.println((versiondata>>24) & 0xFF, HEX); 
+  Serial.print(">Firmware ver. "); Serial.print((versiondata>>16) & 0xFF, DEC); 
+  Serial.print('.'); Serial.println((versiondata>>8) & 0xFF, DEC);
+  
+  // Set the max number of retry attempts to read from a card
+  // This prevents us from waiting forever for a card, which is
+  // the default behaviour of the PN532.
+  nfc.setPassiveActivationRetries(0xFF);
+  
+  // configure board to read RFID tags
+  nfc.SAMConfig();
+    
+  //Serial.println("Waiting for an ISO14443A card");
 }
 
-void loop() {
-  if (!rfid.PICC_IsNewCardPresent() || !rfid.PICC_ReadCardSerial())
-    return;
-
-     Serial.print(F("PICC type: "));
-  MFRC522::PICC_Type piccType = rfid.PICC_GetType(rfid.uid.sak);
-     Serial.println(rfid.PICC_GetTypeName(piccType));
-
-  // Check is the PICC of Classic MIFARE type
-  if (piccType != MFRC522::PICC_TYPE_MIFARE_MINI &&
-    piccType != MFRC522::PICC_TYPE_MIFARE_1K &&
-    piccType != MFRC522::PICC_TYPE_MIFARE_4K) {
-    Serial.println(F("Your tag is not of type MIFARE Classic."));
-    return;
+void loop(void) {
+  boolean success;
+  uint8_t uid[] = { 0, 0, 0, 0, 0, 0, 0 };  // Buffer to store the returned UID
+  uint8_t uidLength;                        // Length of the UID (4 or 7 bytes depending on ISO14443A card type)
+  
+  // Wait for an ISO14443A type cards (Mifare, etc.).  When one is found
+  // 'uid' will be populated with the UID, and uidLength will indicate
+  // if the uid is 4 bytes (Mifare Classic) or 7 bytes (Mifare Ultralight)
+  success = nfc.readPassiveTargetID(PN532_MIFARE_ISO14443A, &uid[0], &uidLength);
+  
+  if (success) {
+    //Serial.println("Found a card!");
+    //Serial.print("UID Length: ");Serial.print(uidLength, DEC);Serial.println(" bytes");
+    //Serial.print("UID Value: ");
+    Serial.print("[");
+    for (uint8_t i=0; i < uidLength; i++) 
+    {
+      //Serial.print(uid[i], HEX);
+      if (uid[i] < 16) 
+      {
+        Serial.print("0");  
+      }
+      Serial.print(uid[i], HEX);
+      if (i<uidLength-1)
+      {
+        Serial.print(':');
+      }
+    }
+    Serial.println("]");
+    // Wait 1 second before continuing
+    delay(1000);
   }
-
-  String strID = "";
-  for (byte i = 0; i < 4; i++) {
-    strID +=
-    (rfid.uid.uidByte[i] < 0x10 ? "0" : "") +
-    String(rfid.uid.uidByte[i], HEX) +
-    (i!=3 ? ":" : "");
-  }
-  strID.toUpperCase();
-  Serial.print("Tap card key: ");
-  Serial.println(strID);
-
-  rfid.PICC_HaltA();
-  rfid.PCD_StopCrypto1();
+  //else
+  //{
+    // PN532 probably timed out waiting for a card
+    //Serial.println("Timed out waiting for a card");
+  //}
 }

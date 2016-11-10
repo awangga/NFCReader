@@ -90,7 +90,7 @@ void loop(void) {
     }
     Serial.println("]");
     // Wait 1 second before continuing
-    delay(1000);
+    //delay(5000);
   }
   //else
   //{

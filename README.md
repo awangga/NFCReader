@@ -1,5 +1,5 @@
 # NFCReader
-Cheap NFCReader with Arduino Uno CH340
+Cheap NFCReader with Arduino Uno CH340 and PN532
 ## Driver Instalation
 ### Mac OSX
 1. Download and install from folder driver
@@ -13,23 +13,19 @@ Cheap NFCReader with Arduino Uno CH340
   $ ls /dev/cu.wch*
   $ sudo ln -s /dev/cu.wch\ ch341\ USB\=\>RS232\ 1d10 /dev/cu.wch
   ```
-5. You can access your Arduino on /dev/tty.anu
+5. You can access your Arduino on /dev/tty.wch
 
 ## Requirement
-1. [Arduino RFID Library for MFRC522]
-2. Arduino AVR Boards version 1.6.11
- * Open up Arduino Apps, select menu tools> Board: "Arduino/Genuino Uno"> Boards Manager
- * Select Version and Install it
+1. [Adafruit NFCShield I2C] Library
+2. On Mac OSX : Arduino IDE Version 1.6.7 or other version with support selecting /dev/tty.wch option
+3. set pin for I2C communication mode,Channel 1 ON and Channel 2 OFF
+ 
 
 ## Sceme
-MFRC55 - Arduino
-3.3V - 3.3V
-RST - D9
-GND - GND
-MISO - D12
-MOSI - D11
-SCK - D13
-SDA - D10
+* PN532 - Arduino
+* VCC - 5V
+* GND - GND
+* SDA - A4
+* SCL - A5
 
-
-[Arduino RFID Library for MFRC522]: <https://github.com/miguelbalboa/rfid>
+[Adafruit NFCShield I2C]: <https://github.com/adafruit/Adafruit_NFCShield_I2C>

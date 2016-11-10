@@ -12,7 +12,7 @@ Cheap NFCReader with Arduino Uno CH340 and PN532
   ```
   sudo ln -s /dev/cu.wch\ ch341\ USB\=\>RS232\ 1d10 /dev/cu.wch
   ```
-5. You can access your Arduino on /dev/tty.wch
+5. You can access your Arduino on /dev/cu.wch port
 
 ## Requirement
 1. [Adafruit NFCShield I2C] Library

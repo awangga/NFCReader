@@ -17,7 +17,7 @@ Cheap NFCReader with Arduino Uno CH340 and PN532
 ## Requirement
 1. [Adafruit NFCShield I2C] Library
 2. On Mac OSX : Arduino IDE Version 1.6.7 or other version with support selecting /dev/tty.wch option
-3. set pin for I2C communication mode,Channel 1 ON and Channel 2 OFF
+3. In PN532,set pin for I2C communication mode,Channel 1 ON and Channel 2 OFF
  
 
 ## Sceme

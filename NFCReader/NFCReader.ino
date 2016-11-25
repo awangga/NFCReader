@@ -1,34 +1,8 @@
-/**************************************************************************/
-/*! 
-    @file     iso14443a_uid.pde
-    @author   Adafruit Industries
-    @license  BSD (see license.txt)
-
-    This example will attempt to connect to an ISO14443A
-    card or tag and retrieve some basic information about it
-    that can be used to determine what type of card it is.   
-   
-    Note that you need the baud rate to be 115200 because we need to print
-    out the data and read from the card at the same time!
-
-    This is an example sketch for the Adafruit PN532 NFC/RFID breakout boards
-    This library works with the Adafruit NFC breakout 
-    ----> https://www.adafruit.com/products/364
- 
-    Check out the links above for our tutorials and wiring diagrams 
-    These chips use I2C to communicate, 4 pins required to interface:
-    SDA (I2C Data) and SCL (I2C Clock), IRQ and RESET (any digital line)
-
-    Adafruit invests time and resources providing this open source code, 
-    please support Adafruit and open-source hardware by purchasing 
-    products from Adafruit!
-*/
-/**************************************************************************/
 #include <Wire.h>
 #include <Adafruit_NFCShield_I2C.h>
 
 #define IRQ   (2)
-#define RESET (3)  // Not connected by default on the NFC Shield
+#define RESET (3)  
 
 Adafruit_NFCShield_I2C nfc(IRQ, RESET);
 
@@ -52,7 +26,7 @@ void setup(void) {
   // Set the max number of retry attempts to read from a card
   // This prevents us from waiting forever for a card, which is
   // the default behaviour of the PN532.
-  nfc.setPassiveActivationRetries(0xFF);
+  //nfc.setPassiveActivationRetries(0xFF);
   
   // configure board to read RFID tags
   nfc.SAMConfig();
@@ -68,33 +42,26 @@ void loop(void) {
   // Wait for an ISO14443A type cards (Mifare, etc.).  When one is found
   // 'uid' will be populated with the UID, and uidLength will indicate
   // if the uid is 4 bytes (Mifare Classic) or 7 bytes (Mifare Ultralight)
-  success = nfc.readPassiveTargetID(PN532_MIFARE_ISO14443A, &uid[0], &uidLength);
+  success = nfc.readPassiveTargetID(PN532_MIFARE_ISO14443A, uid, &uidLength);
   
   if (success) {
     //Serial.println("Found a card!");
     //Serial.print("UID Length: ");Serial.print(uidLength, DEC);Serial.println(" bytes");
     //Serial.print("UID Value: ");
-    Serial.print("[");
-    for (uint8_t i=0; i < uidLength; i++) 
-    {
-      //Serial.print(uid[i], HEX);
-      if (uid[i] < 16) 
-      {
-        Serial.print("0");  
-      }
-      Serial.print(uid[i], HEX);
-      if (i<uidLength-1)
-      {
-        Serial.print(':');
-      }
-    }
-    Serial.println("]");
+    nfc.PrintHex(uid, uidLength);
+    uint8_t keya[6] = { 0xD3, 0xF7, 0xD3, 0xF7, 0xD3, 0xF7 };
+    success = nfc.mifareclassic_AuthenticateBlock(uid, uidLength, 4, 0, keya);
+    //if (success)
+    //{
+    //  Serial.println("Authentication work");
+    //}
+    //uint8_t data[16];
+    uint8_t data[16];
+    success = nfc.mifareclassic_ReadDataBlock(4, data);
+    //success = nfc.mifareultralight_ReadPage (32, data);
+    nfc.PrintHexChar(data, 16);
     // Wait 1 second before continuing
-    //delay(5000);
+    delay(1000);
   }
-  //else
-  //{
-    // PN532 probably timed out waiting for a card
-    //Serial.println("Timed out waiting for a card");
-  //}
+
 }

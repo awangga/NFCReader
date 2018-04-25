@@ -14,7 +14,7 @@ Compatible with MacOs High Sierra.
   ```
   ls /dev/
   ```
-5. You can access your Arduino on /dev/cu.wchusbserialfa130 or /dev/tty.wchusbserialfa130 using 11500 Baudrate.
+5. You can access your Arduino on /dev/cu.wchusbserialfa130 or /dev/tty.wchusbserialfa130 using 115200 Baudrate.
 
 ## Requirement
 1. [Adafruit NFCShield I2C] Library

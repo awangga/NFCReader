@@ -2,21 +2,23 @@
 Cheap NFCReader with Arduino Uno CH340 and PN532
 ## Driver Instalation
 ### Mac OSX
-1. Download and install from folder driver
-2. Before click restart please open terminal and run command
+Compatible with MacOs High Sierra.
+1. Download CH341SER_MAC.zip from driver folder.
+2. remove old driver, please open terminal and run command
   ```
-  sudo nvram boot-args=”kext-dev-mode=1″
+  rm -rf /System/Library/Extensions/usbserial.kext
+  rm -rf /Library/Extensions/usbserial.kext
   ```
-3. restart MAC, after rebooting login to your MAC and open terminal
-4. Lookat your serial folder and match it to create softlink to it by run this command
+3. Unzip CH341SER_MAC and install CH34x_Install_V1.4.pkg then restart MAC, after rebooting login to your MAC and open terminal
+4. Conect arduino into your Mac and Look at your serial folder 
   ```
-  sudo ln -s /dev/cu.wch\ ch341\ USB\=\>RS232\ 1d10 /dev/cu.wch
+  ls /dev/
   ```
-5. You can access your Arduino on /dev/cu.wch port
+5. You can access your Arduino on /dev/cu.wchusbserialfa130 or /dev/tty.wchusbserialfa130 using 11500 Baudrate.
 
 ## Requirement
 1. [Adafruit NFCShield I2C] Library
-2. On Mac OSX : Arduino IDE Version 1.6.7 or other version with support selecting /dev/tty.wch option
+2. On Mac OSX : Arduino IDE Version 1.6.7 or higher.
 3. In PN532,set pin for I2C communication mode,Channel 1 ON and Channel 2 OFF
  
 
